@@ -1,0 +1,36 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model UserKey {
+  id             String    @id @default(uuid())
+  provider       String    // e.g., "openai", "anthropic"
+  encryptedKey   String    // AES encrypted API key
+  createdAt      DateTime  @default(now())
+}
+
+model Thread {
+  id             String    @id @default(uuid())
+  title          String?
+  parentThreadId String?
+  parentThread   Thread?   @relation("ThreadToThread", fields: [parentThreadId], references: [id])
+  childThreads   Thread[]  @relation("ThreadToThread")
+  messages       Message[]
+  createdAt      DateTime  @default(now())
+}
+
+model Message {
+  id             String    @id @default(uuid())
+  threadId       String
+  thread         Thread    @relation(fields: [threadId], references: [id])
+  role           String    // "user" or "assistant"
+  content        String    
+  branchedText   String?   // The highlighted text
+  childThreadId  String?   // ID of the spawned thread
+  createdAt      DateTime  @default(now())
+}

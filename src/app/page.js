@@ -2,7 +2,7 @@
 
 import { useSearchParams, useRouter } from "next/navigation";
 import React, { Suspense, useState, useEffect, useRef, useMemo } from "react";
-import { MessageSquare, X, Maximize, Minimize, Network, Copy, Check } from "lucide-react";
+import { MessageSquare, X, Maximize, Minimize, Network, Copy, Check, Square } from "lucide-react";
 import { useChat } from "@ai-sdk/react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
@@ -358,7 +358,7 @@ function ChatThread({ id, title, isNested, closeSidebar, threads = [], onOpenThr
   const branchMessageId = isNested ? searchParams.get("branchMessageId") : null;
   const branchedText = isNested ? searchParams.get("branchedText") : null;
 
-  const { messages, status, sendMessage, error } = useChat({
+  const { messages, status, sendMessage, error, stop } = useChat({
     id: id,
     api: "/api/chat",
     body: {
@@ -478,6 +478,16 @@ function ChatThread({ id, title, isNested, closeSidebar, threads = [], onOpenThr
             placeholder={isNested ? "Reply to thread..." : "Message AI..."}
             className="flex-1 px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 text-slate-800 dark:text-white shadow-sm"
           />
+          {isLoading && (
+            <button
+              type="button"
+              onClick={stop}
+              className="px-4 py-3 bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400 rounded-xl font-medium hover:bg-red-200 dark:hover:bg-red-900/60 transition-colors shrink-0 shadow-sm cursor-pointer flex items-center justify-center"
+              title="Stop generating"
+            >
+              <Square size={20} className="fill-current" />
+            </button>
+          )}
           <button
             type="submit"
             disabled={isLoading || !localInput || !localInput.trim()}

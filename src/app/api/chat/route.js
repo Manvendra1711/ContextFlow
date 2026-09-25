@@ -22,7 +22,7 @@ export async function POST(req) {
     if (openrouterKey) {
       const openrouter = createOpenRouter({ apiKey: openrouterKey });
       // Use :free suffix models to avoid credit issues
-      model = openrouter(process.env.OPENROUTER_MODEL || 'google/gemini-2.0-flash-exp:free');
+      model = openrouter(process.env.OPENROUTER_MODEL || 'openrouter/free');
     } else if (googleKey) {
       const google = createGoogleGenerativeAI({ apiKey: googleKey });
       model = google(process.env.GEMINI_MODEL || 'gemini-2.5-flash');

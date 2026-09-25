@@ -42,6 +42,7 @@ export async function POST(req) {
         id: threadId,
         parentThreadId: parentThreadId || null,
         branchMessageId: branchMessageId || null,
+        branchedText: branchedText || null,
         createdAt: Date.now()
       });
     }

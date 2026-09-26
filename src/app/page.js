@@ -358,7 +358,7 @@ function ChatThread({ id, title, isNested, closeSidebar, threads = [], onOpenThr
   const branchMessageId = isNested ? searchParams.get("branchMessageId") : null;
   const branchedText = isNested ? searchParams.get("branchedText") : null;
 
-  const { messages, status, sendMessage, error, stop } = useChat({
+  const { messages, status, sendMessage, error, stop, setMessages } = useChat({
     id: id,
     api: "/api/chat",
     body: {
@@ -368,6 +368,18 @@ function ChatThread({ id, title, isNested, closeSidebar, threads = [], onOpenThr
       branchedText,
     },
   });
+
+  // Fetch initial messages for this thread when mounted
+  useEffect(() => {
+    fetch(`/api/messages?threadId=${id}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data) && data.length > 0) {
+          setMessages(data);
+        }
+      })
+      .catch(err => console.error("Failed to load messages", err));
+  }, [id, setMessages]);
 
   const isLoading = status === "submitted" || status === "streaming";
   const [localInput, setLocalInput] = useState("");
